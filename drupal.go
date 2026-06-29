@@ -92,12 +92,7 @@ func (drupalModule) PostScanSpec() serialize.PostScanSpec {
 }
 
 func (drupalModule) PostScan(results types.Results) (types.Results, error) {
-
-    index := pkg.GenereatIndex()
-	if index == nil {
-		return results, nil
-	}
-
+	var finalReults = results
 	for _, result := range results {
 		if result.Class != types.ClassCustom {
 			continue
@@ -129,17 +124,13 @@ func (drupalModule) PostScan(results types.Results) (types.Results, error) {
 					continue
 				}
 
-				wasm.Info(fmt.Sprintf("WordPress Version: %s", "lkmlllllllllllllllll.Slug"))
-				println("Slug:", result.Slug)
-				println("Advisories:", len(result.Advisories))
-
-				wasm.Info(fmt.Sprintf("WordPress Version: %s", "eeeeeeeeeeeeeeeeeeeeee.Slug"))
 				for _, item := range result.Advisories {
+					wasm.Info(fmt.Sprintf("WordPress Advisories: %s", item.CVE))
 					vulns = append(vulns, types.DetectedVulnerability{
 						VulnerabilityID:  item.CVE,
 						PkgName:          moduleName,
 						InstalledVersion: moduleVersion,
-						FixedVersion:     "",
+						FixedVersion:     "6",
 						Vulnerability: dbTypes.Vulnerability{
 							Title:    item.IssueURL,
 							Severity: item.Criticality,
@@ -148,7 +139,7 @@ func (drupalModule) PostScan(results types.Results) (types.Results, error) {
 				}
 			}
 
-			results = append(results, types.Result{
+			finalReults = append(finalReults, types.Result{
 				Target:          c.FilePath,
 				Class:           types.ClassLangPkg,
 				Type:            "composer",
@@ -156,5 +147,5 @@ func (drupalModule) PostScan(results types.Results) (types.Results, error) {
 			})
 		}
 	}
-	return results, nil
+	return finalReults, nil
 }
