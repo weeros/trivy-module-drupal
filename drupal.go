@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/weeros/trivy-module-drupal/pkg"
 
 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
@@ -93,7 +94,9 @@ func (drupalModule) PostScanSpec() serialize.PostScanSpec {
 func (drupalModule) PostScan(results types.Results) (types.Results, error) {
 
     index := pkg.GenereatIndex()
-
+	if index == nil {
+		return results, nil
+	}
 
 	for _, result := range results {
 		if result.Class != types.ClassCustom {
@@ -121,7 +124,7 @@ func (drupalModule) PostScan(results types.Results) (types.Results, error) {
 				moduleVersion, _ := moduleMap["version"].(string)
 
 				wasm.Info(fmt.Sprintf("WordPress Version: %s", "aaaaaaaaaaaaaaaaa.Slug"))
-				result, found := pkg.FindBySlug(index, "core")
+				result, found := pkg.FindBySlug(pkg.Projects, "core")
 				if !found {
 					continue
 				}

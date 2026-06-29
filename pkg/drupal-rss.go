@@ -76,7 +76,7 @@ func LoadJSON(file string) ([]Output, error) {
         return nil, err
     }
 
-				wasm.Info(fmt.Sprintf("WordPress Version: %s", "lkmlllllllllllllllll.Slug"))
+    wasm.Info(fmt.Sprintf("WordPress Version: %s", "lkmlllllllllllllllll.Slug"))
     var outputs []Output
 
     err = json.Unmarshal(data, &outputs)
@@ -99,43 +99,17 @@ func IndexBySlug(outputs []Output) map[string]Output {
 }
 
 func GenerateNameFile() string {
-    return fmt.Sprintf("/tmp/drupal_advisories_%s.json", time.Now().Format("20060102"));
+    return "./drupal_advisories.json";
 }
 
 func GenereatIndex() map[string]Output {
     
-
-now := time.Now()
-formatted := now.Format("20060102")
-
-log.Printf("Now: %v", now)
-log.Printf("Formatted date: %s", formatted)
-
-        wasm.Info(fmt.Sprintf("Now: %s", now))
-        wasm.Info(fmt.Sprintf("Formatted date: %s", formatted))
-
     filepath := GenerateNameFile()
     outputs, err := LoadJSON(filepath)
     if err != nil {
-
-
-
-
-
-        wasm.Info(fmt.Sprintf("WordPress Version: %s", "YOLO.Slug"))
-                    wasm.Error(fmt.Sprintf("Open Drupal Json CVE: %s", err))
-
-                    panic(err)
-        GenerateJson(filepath)
-
-        outputs, err = LoadJSON(filepath)
-        if err != nil {
-            wasm.Info(fmt.Sprintf("WordPress Version: %s", "ef.Slug"))
-            panic(err)
-        }
+        wasm.Error(fmt.Sprintf("Open Drupal Json CVE: %s", err))
+        return nil
     }
-    wasm.Info(fmt.Sprintf("WordPress Version: %s", "IndexBySlug"))
-
     return IndexBySlug(outputs)
 }
 
