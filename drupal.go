@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-
+	"strings"
 	"github.com/weeros/trivy-module-drupal/pkg"
 
 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
@@ -114,18 +114,15 @@ func (drupalModule) PostScan(results types.Results) (types.Results, error) {
 					continue
 				}
 
-				wasm.Info(fmt.Sprintf("WordPress Version: %s", "cccccccccccccccccc.Slug"))
 				moduleName, _ := moduleMap["name"].(string)
 				moduleVersion, _ := moduleMap["version"].(string)
-
-				wasm.Info(fmt.Sprintf("WordPress Version: %s", "aaaaaaaaaaaaaaaaa.Slug"))
-				result, found := pkg.FindBySlug(pkg.Projects, "core")
+				wasm.Info(fmt.Sprintf("moduleName Version: %s", moduleName))
+				slug := strings.TrimPrefix(moduleName, "drupal/")
+				search, found := pkg.FindBySlug(pkg.Projects, slug)
 				if !found {
 					continue
 				}
-
-				for _, item := range result.Advisories {
-					wasm.Info(fmt.Sprintf("WordPress Advisories: %s", item.CVE))
+				for _, item := range search.Advisories {
 					vulns = append(vulns, types.DetectedVulnerability{
 						VulnerabilityID:  item.CVE,
 						PkgName:          moduleName,
@@ -133,7 +130,7 @@ func (drupalModule) PostScan(results types.Results) (types.Results, error) {
 						FixedVersion:     "6",
 						Vulnerability: dbTypes.Vulnerability{
 							Title:    item.IssueURL,
-							Severity: item.Criticality,
+							Severity: "CRITICAL",
 						},
 					})
 				}
